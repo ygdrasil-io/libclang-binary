@@ -1,0 +1,19 @@
+name: Publish binary
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: fwilhe2/setup-kotlin@main
+      - run: ./fetch.main.kts
+      - run: ./upload.main.kts
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}

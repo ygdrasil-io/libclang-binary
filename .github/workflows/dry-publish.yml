@@ -1,0 +1,32 @@
+name: Dry publish binary
+
+on:
+  push:
+    branches: [ master, 'release/**'  ]
+  pull_request:
+    branches: [ master, 'release/**'  ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: fwilhe2/setup-kotlin@main
+      - run: ./fetch.main.kts
+      - uses: actions/upload-artifact@v3
+        with:
+          name: libSDL2.dylib
+          path: ./tmp/libSDL2.dylib
+      - uses: actions/upload-artifact@v3
+        with:
+          name: headers.zip
+          path: ./tmp/headers.zip
+      - uses: actions/upload-artifact@v3
+        with:
+          name: libSDL2.dll
+          path: ./tmp/libSDL2.dll
